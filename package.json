@@ -28,6 +28,6 @@
         "url": "https://github.com/bttrs-org/sequence-generator.git"
     },
     "files": [
-        "src/**"
+        "dist/**"
     ]
 }
