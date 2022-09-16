@@ -1,14 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Generator = void 0;
-const shuffle_1 = require("lodash/shuffle");
+const lodash_1 = require("lodash");
 const BASE_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const ALPHABET_LENGTH = BASE_ALPHABET.length;
 const MAX_LENGTH = 8;
 function generateAlphabet(random) {
     const chars = BASE_ALPHABET.split('');
     if (random) {
-        return (0, shuffle_1.default)(chars);
+        return (0, lodash_1.shuffle)(chars);
     }
     return chars;
 }
@@ -19,10 +19,10 @@ class Generator {
             maxChars: MAX_LENGTH,
             shuffle: true,
         }, options);
-        if (!this.options.minChars || this.options.minChars <= 1 || this.options.minChars > MAX_LENGTH) {
+        if (!this.options.minChars || this.options.minChars < 1 || this.options.minChars > MAX_LENGTH) {
             throw new Error(`minChars has to be between 1 and ${MAX_LENGTH}`);
         }
-        if (!this.options.maxChars || this.options.maxChars <= 1 || this.options.maxChars > MAX_LENGTH) {
+        if (!this.options.maxChars || this.options.maxChars < 1 || this.options.maxChars > MAX_LENGTH) {
             throw new Error(`maxChars has to be between 1 and ${MAX_LENGTH}`);
         }
         this.alphabet = generateAlphabet(!!this.options.shuffle);

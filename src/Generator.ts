@@ -1,4 +1,4 @@
-import shuffle from 'lodash/shuffle';
+import { shuffle } from 'lodash';
 
 const BASE_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 const ALPHABET_LENGTH = BASE_ALPHABET.length;
@@ -34,10 +34,10 @@ export class Generator {
             shuffle: true,
         }, options);
 
-        if (!this.options.minChars || this.options.minChars <= 1 || this.options.minChars > MAX_LENGTH) {
+        if (!this.options.minChars || this.options.minChars < 1 || this.options.minChars > MAX_LENGTH) {
             throw new Error(`minChars has to be between 1 and ${MAX_LENGTH}`);
         }
-        if (!this.options.maxChars || this.options.maxChars <= 1 || this.options.maxChars > MAX_LENGTH) {
+        if (!this.options.maxChars || this.options.maxChars < 1 || this.options.maxChars > MAX_LENGTH) {
             throw new Error(`maxChars has to be between 1 and ${MAX_LENGTH}`);
         }
 
