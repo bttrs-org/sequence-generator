@@ -3,7 +3,10 @@
     "version": "1.0.0",
     "description": "Generate base62 sequence",
     "author": "bttrs.org",
-    "keywords": ["sequence", "generator"],
+    "keywords": [
+        "sequence",
+        "generator"
+    ],
     "license": "MIT",
     "homepage": "https://github.com/bttrs-org/sequence-generator",
     "bugs": {
@@ -15,11 +18,8 @@
         "build": "npm run clean && tsc",
         "start": "tsc --watch"
     },
-    "dependencies": {
-        "lodash": "^4.17.21"
-    },
+    "dependencies": {},
     "devDependencies": {
-        "@types/lodash": "^4.14.185",
         "rimraf": "^3.0.2",
         "typescript": "^4.8.3"
     },

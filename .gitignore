@@ -2,6 +2,8 @@
 *.log
 npm-debug.log*
 
+tsconfig.tsbuildinfo
+
 # Dependency directories
 node_modules/
 
