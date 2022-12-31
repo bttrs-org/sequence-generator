@@ -1,65 +1,130 @@
-import { base62, generateAlphabet } from './utils';
-
-const BASE_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-const MAX_LENGTH = 8;
-const DEFAULT_OPTIONS: GeneratorOptions = {
-    minChars: 1,
-    maxChars: MAX_LENGTH,
-    shuffle: true,
-    prefix: '',
-};
+import { createLcg } from './lcg';
+import { base62, shuffleArray } from './utils';
 
 export interface GeneratorOptions {
-    minChars: number;
-    maxChars: number;
+    /** Min generated value (inclusive). */
+    min: number;
+    /** Max generated value (inclusive). */
+    max: number;
+    /** Min length of generated string. */
+    minLength: number;
+    /** Max length of generated string. */
+    maxLength: number;
+    /** All generated strings will be prefixed and have maxLength length. */
+    fixedLength: boolean;
+    /** Prefix used if fixedLength in true. If not specified, first alphabet letter is used. */
     prefix: string;
+    /** If true, alphabet will be shuffled. */
     shuffle: boolean;
+    /**
+     * If true, random values will be generated.
+     * Each number between min and max will be generated exactly once.
+     * After all possible values are generated, it repeats the same random sequence again.
+     */
+    random: boolean;
+    /**
+     * Custom alphabet.
+     * Default is "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+     */
+    alphabet: string;
 }
 
 export interface Generator {
     (options?: GeneratorOptions): string;
-    readonly alphabet: string;
-    readonly minValue: number;
-    readonly maxValue: number;
-    readonly sequenceLength: number;
+    readonly options: GeneratorOptions;
 }
 
-export default function createGenerator(opts?: Partial<GeneratorOptions>): Generator {
-    const options: GeneratorOptions = Object.assign({}, DEFAULT_OPTIONS, opts);
-    if (!options.minChars || options.minChars < 1 || options.minChars > MAX_LENGTH) {
-        throw new Error(`minChars has to be between 1 and ${MAX_LENGTH}`);
-    }
-    if (!options.maxChars || options.maxChars < 1 || options.maxChars > MAX_LENGTH) {
-        throw new Error(`maxChars has to be between 1 and ${MAX_LENGTH}`);
-    }
+const DEFAULT_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    const alphabet: string[] = generateAlphabet(BASE_ALPHABET, !!options.shuffle);
-    const minValue: number = options.minChars === 1 ? 0 : Math.pow(BASE_ALPHABET.length, options.minChars - 1);
-    const maxValue: number = Math.pow(BASE_ALPHABET.length, options.maxChars) - 1;
-    let index: number = minValue;
+export default function createGenerator(opts?: Partial<GeneratorOptions>): Generator {
+    const options: GeneratorOptions = getOptions(opts);
+    const alphabet: string[] = options.alphabet.split('');
+
+    const gen = getNumberGenerator(options.random, options.min, options.max);
 
     function generate(): string {
-        const id = base62(index, alphabet, options.maxChars, options.prefix);
-        index++;
-        if (index > maxValue) {
-            index = minValue;
-        }
-
-        return id;
+        return base62(gen(), alphabet, options.prefix, options.maxLength);
     }
 
     return Object.assign(generate, {
-        get alphabet(): string {
-            return alphabet.join();
-        },
-        get minValue(): number {
-            return minValue;
-        },
-        get maxValue(): number {
-            return maxValue;
-        },
-        get sequenceLength(): number {
-            return maxValue - minValue + 1;
+        get options(): GeneratorOptions {
+            return { ...options };
         },
     });
+}
+
+function getNumberGenerator(random: boolean, min: number, max: number) {
+    if (random) {
+        return createLcg(min, max + 1);
+    }
+
+    let index: number = min;
+    return function () {
+        const i = index;
+        index++;
+        if (index > max) {
+            index = min;
+        }
+        return i;
+    };
+}
+
+function getOptions(options?: Partial<GeneratorOptions>): GeneratorOptions {
+    const alphabet = getAlphabet(options?.alphabet ?? DEFAULT_ALPHABET, options?.shuffle);
+    let min: number;
+    let max: number;
+    let minLength: number;
+    let maxLength: number;
+
+    if (options?.minLength !== undefined) {
+        minLength = options.minLength;
+        min = minLength === 1 ? 0 : alphabet.length ** (minLength - 1);
+    } else {
+        min = options?.min ?? 0;
+        minLength = encodedLength(min, alphabet.length);
+    }
+    if (options?.maxLength !== undefined) {
+        maxLength = options.maxLength;
+        max = alphabet.length ** options.maxLength - 1;
+    } else {
+        max = options?.max ?? Number.MAX_SAFE_INTEGER;
+        maxLength = encodedLength(max, alphabet.length);
+    }
+
+    if (min >= max) {
+        throw new Error();
+    }
+
+    return {
+        min,
+        max,
+        minLength,
+        maxLength,
+        prefix: options?.prefix ?? '',
+        fixedLength: options?.fixedLength ?? false,
+        random: options?.random ?? false,
+        shuffle: options?.shuffle ?? false,
+        alphabet,
+    };
+}
+
+function encodedLength(n: number, alphabetLength: number) {
+    if (n === 0) {
+        return 1;
+    }
+    let l = 0;
+    let b = 1;
+    while (b <= n) {
+        l++;
+        b = b * alphabetLength;
+    }
+    return l;
+}
+
+function getAlphabet(alphabet: string, shuffle: boolean | undefined): string {
+    const chars = alphabet.split('');
+    if (shuffle) {
+        shuffleArray(chars);
+    }
+    return chars.join('');
 }

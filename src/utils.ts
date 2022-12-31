@@ -1,4 +1,4 @@
-function shuffleArray(array: string[]) {
+export function shuffleArray(array: string[]) {
     let currentIndex = array.length;
     let randomIndex: number;
 
@@ -9,7 +9,7 @@ function shuffleArray(array: string[]) {
     }
 }
 
-export function base62(i: number, alphabet: string[], maxChars: number, prefix: string): string {
+export function base62(i: number, alphabet: string[], prefix?: string, maxChars?: number): string {
     let c: string;
     if (i === 0) {
         c = alphabet[0];
@@ -24,17 +24,9 @@ export function base62(i: number, alphabet: string[], maxChars: number, prefix: 
         c = sb;
     }
 
-    if (prefix) {
+    if (prefix && maxChars) {
         return c.padStart(maxChars, prefix);
     } else {
         return c;
     }
-}
-
-export function generateAlphabet(alphabet: string, shuffle: boolean): string[] {
-    const chars = alphabet.split('');
-    if (shuffle) {
-        shuffleArray(chars);
-    }
-    return chars;
 }

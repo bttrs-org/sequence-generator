@@ -9,7 +9,7 @@
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.generateAlphabet = exports.base62 = void 0;
+    exports.base62 = exports.shuffleArray = void 0;
     function shuffleArray(array) {
         let currentIndex = array.length;
         let randomIndex;
@@ -19,7 +19,8 @@
             [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
         }
     }
-    function base62(i, alphabet, maxChars, prefix) {
+    exports.shuffleArray = shuffleArray;
+    function base62(i, alphabet, prefix, maxChars) {
         let c;
         if (i === 0) {
             c = alphabet[0];
@@ -33,7 +34,7 @@
             }
             c = sb;
         }
-        if (prefix) {
+        if (prefix && maxChars) {
             return c.padStart(maxChars, prefix);
         }
         else {
@@ -41,12 +42,4 @@
         }
     }
     exports.base62 = base62;
-    function generateAlphabet(alphabet, shuffle) {
-        const chars = alphabet.split('');
-        if (shuffle) {
-            shuffleArray(chars);
-        }
-        return chars;
-    }
-    exports.generateAlphabet = generateAlphabet;
 });

@@ -4,54 +4,96 @@
         if (v !== undefined) module.exports = v;
     }
     else if (typeof define === "function" && define.amd) {
-        define(["require", "exports", "./utils"], factory);
+        define(["require", "exports", "./lcg", "./utils"], factory);
     }
 })(function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
+    const lcg_1 = require("./lcg");
     const utils_1 = require("./utils");
-    const BASE_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const MAX_LENGTH = 8;
-    const DEFAULT_OPTIONS = {
-        minChars: 1,
-        maxChars: MAX_LENGTH,
-        shuffle: true,
-        prefix: '',
-    };
+    const DEFAULT_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     function createGenerator(opts) {
-        const options = Object.assign({}, DEFAULT_OPTIONS, opts);
-        if (!options.minChars || options.minChars < 1 || options.minChars > MAX_LENGTH) {
-            throw new Error(`minChars has to be between 1 and ${MAX_LENGTH}`);
-        }
-        if (!options.maxChars || options.maxChars < 1 || options.maxChars > MAX_LENGTH) {
-            throw new Error(`maxChars has to be between 1 and ${MAX_LENGTH}`);
-        }
-        const alphabet = (0, utils_1.generateAlphabet)(BASE_ALPHABET, !!options.shuffle);
-        const minValue = options.minChars === 1 ? 0 : Math.pow(BASE_ALPHABET.length, options.minChars - 1);
-        const maxValue = Math.pow(BASE_ALPHABET.length, options.maxChars) - 1;
-        let index = minValue;
+        const options = getOptions(opts);
+        const alphabet = options.alphabet.split('');
+        const gen = getNumberGenerator(options.random, options.min, options.max);
         function generate() {
-            const id = (0, utils_1.base62)(index, alphabet, options.maxChars, options.prefix);
-            index++;
-            if (index > maxValue) {
-                index = minValue;
-            }
-            return id;
+            return (0, utils_1.base62)(gen(), alphabet, options.prefix, options.maxLength);
         }
         return Object.assign(generate, {
-            get alphabet() {
-                return alphabet.join();
-            },
-            get minValue() {
-                return minValue;
-            },
-            get maxValue() {
-                return maxValue;
-            },
-            get sequenceLength() {
-                return maxValue - minValue + 1;
+            get options() {
+                return { ...options };
             },
         });
     }
     exports.default = createGenerator;
+    function getNumberGenerator(random, min, max) {
+        if (random) {
+            return (0, lcg_1.createLcg)(min, max + 1);
+        }
+        let index = min;
+        return function () {
+            const i = index;
+            index++;
+            if (index > max) {
+                index = min;
+            }
+            return i;
+        };
+    }
+    function getOptions(options) {
+        const alphabet = getAlphabet(options?.alphabet ?? DEFAULT_ALPHABET, options?.shuffle);
+        let min;
+        let max;
+        let minLength;
+        let maxLength;
+        if (options?.minLength !== undefined) {
+            minLength = options.minLength;
+            min = minLength === 1 ? 0 : alphabet.length ** (minLength - 1);
+        }
+        else {
+            min = options?.min ?? 0;
+            minLength = encodedLength(min, alphabet.length);
+        }
+        if (options?.maxLength !== undefined) {
+            maxLength = options.maxLength;
+            max = alphabet.length ** options.maxLength - 1;
+        }
+        else {
+            max = options?.max ?? Number.MAX_SAFE_INTEGER;
+            maxLength = encodedLength(max, alphabet.length);
+        }
+        if (min >= max) {
+            throw new Error();
+        }
+        return {
+            min,
+            max,
+            minLength,
+            maxLength,
+            prefix: options?.prefix ?? '',
+            fixedLength: options?.fixedLength ?? false,
+            random: options?.random ?? false,
+            shuffle: options?.shuffle ?? false,
+            alphabet,
+        };
+    }
+    function encodedLength(n, alphabetLength) {
+        if (n === 0) {
+            return 1;
+        }
+        let l = 0;
+        let b = 1;
+        while (b <= n) {
+            l++;
+            b = b * alphabetLength;
+        }
+        return l;
+    }
+    function getAlphabet(alphabet, shuffle) {
+        const chars = alphabet.split('');
+        if (shuffle) {
+            (0, utils_1.shuffleArray)(chars);
+        }
+        return chars.join('');
+    }
 });
