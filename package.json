@@ -1,23 +1,24 @@
 {
-    "name": "sequence-generator",
-    "version": "1.0.0",
-    "description": "Generate base62 sequence",
+    "name": "sequence-id-generator",
+    "version": "0.0.1",
+    "description": "Generate base62 pseudo-random sequence IDs",
     "author": "bttrs.org",
     "keywords": [
         "sequence",
+        "id",
         "generator"
     ],
     "license": "MIT",
-    "homepage": "https://github.com/bttrs-org/sequence-generator",
+    "homepage": "https://github.com/bttrs-org/sequence-id-generator",
     "bugs": {
-        "url": "https://github.com/bttrs-org/sequence-generator/issues"
+        "url": "https://github.com/bttrs-org/sequence-id-generator/issues"
     },
     "main": "dist/index.js",
     "scripts": {
         "clean": "rimraf dist",
         "build": "npm run clean && tsc",
         "start": "tsc --watch",
-        "test": "jest -i"
+        "test": "jest"
     },
     "devDependencies": {
         "@types/jest": "^29.2.4",
@@ -28,7 +29,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/bttrs-org/sequence-generator.git"
+        "url": "https://github.com/bttrs-org/sequence-id-generator.git"
     },
     "files": [
         "dist/**"
