@@ -1,1 +1,1 @@
-# sequence-generator
+# Sequence ID generator
