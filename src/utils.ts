@@ -9,7 +9,7 @@ export function shuffleArray(array: string[]) {
     }
 }
 
-export function base62(i: number, alphabet: string[], prefix?: string, maxChars?: number): string {
+export function base62(i: number, alphabet: string[], prefix?: string, minChars?: number): string {
     let c: string;
     if (i === 0) {
         c = alphabet[0];
@@ -24,8 +24,8 @@ export function base62(i: number, alphabet: string[], prefix?: string, maxChars?
         c = sb;
     }
 
-    if (prefix && maxChars) {
-        return c.padStart(maxChars, prefix);
+    if (prefix && minChars) {
+        return c.padStart(minChars, prefix);
     } else {
         return c;
     }

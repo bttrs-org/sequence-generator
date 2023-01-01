@@ -11,7 +11,7 @@ describe('generator', () => {
             maxLength: 9,
             min: 0,
             minLength: 1,
-            prefix: '',
+            prefix: '0',
             random: false,
             shuffle: false,
         });
@@ -151,5 +151,33 @@ describe('generator', () => {
         }
         expect(values).not.toEqual(['0', '1', '2', '3', '4', '10', '11', '12', '13', '14', '20', '0']);
         expect(values[0]).toBe(values[values.length - 1]);
+    });
+
+    test('generate values with prefix', () => {
+        let gen: Generator;
+        let values: string[];
+
+        gen = createGenerator({
+            alphabet: '01234',
+            max: 10,
+            fixedLength: true,
+        });
+        values = [];
+        for (let i = 0; i < 12; i++) {
+            values.push(gen());
+        }
+        expect(values).toEqual(['00', '01', '02', '03', '04', '10', '11', '12', '13', '14', '20', '00']);
+
+        gen = createGenerator({
+            alphabet: '01234',
+            max: 10,
+            fixedLength: true,
+            prefix: '-',
+        });
+        values = [];
+        for (let i = 0; i < 12; i++) {
+            values.push(gen());
+        }
+        expect(values).toEqual(['-0', '-1', '-2', '-3', '-4', '10', '11', '12', '13', '14', '20', '-0']);
     });
 });

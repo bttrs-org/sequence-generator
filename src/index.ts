@@ -43,7 +43,8 @@ export default function createGenerator(opts?: Partial<GeneratorOptions>): Gener
     const gen = getNumberGenerator(options.random, options.min, options.max);
 
     function generate(): string {
-        return base62(gen(), alphabet, options.prefix, options.maxLength);
+        const minChars = options.fixedLength ? options.maxLength : options.minLength;
+        return base62(gen(), alphabet, options.prefix, minChars);
     }
 
     return Object.assign(generate, {
@@ -100,7 +101,7 @@ function getOptions(options?: Partial<GeneratorOptions>): GeneratorOptions {
         max,
         minLength,
         maxLength,
-        prefix: options?.prefix ?? '',
+        prefix: options?.prefix || alphabet.charAt(0),
         fixedLength: options?.fixedLength ?? false,
         random: options?.random ?? false,
         shuffle: options?.shuffle ?? false,
