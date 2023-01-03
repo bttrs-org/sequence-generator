@@ -34,6 +34,7 @@ describe('generator', () => {
         });
         expect(gen.options.minLength).toBe(1);
         expect(gen.options.maxLength).toBe(2);
+
         gen = createGenerator({
             alphabet: '01234',
             min: 4,
@@ -41,6 +42,7 @@ describe('generator', () => {
         });
         expect(gen.options.minLength).toBe(1);
         expect(gen.options.maxLength).toBe(2);
+
         gen = createGenerator({
             alphabet: '01234',
             min: 24,
@@ -76,6 +78,13 @@ describe('generator', () => {
         });
         expect(gen.options.min).toBe(5);
         expect(gen.options.max).toBe(124);
+
+        gen = createGenerator({
+            minLength: 25,
+            maxLength: 25,
+        });
+        expect(gen.options.min).toBe(Number.MAX_SAFE_INTEGER - 1);
+        expect(gen.options.max).toBe(Number.MAX_SAFE_INTEGER);
     });
 
     test('generate values', () => {

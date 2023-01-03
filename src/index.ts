@@ -72,28 +72,44 @@ function getNumberGenerator(random: boolean, min: number, max: number) {
 
 function getOptions(options?: Partial<GeneratorOptions>): GeneratorOptions {
     const alphabet = getAlphabet(options?.alphabet ?? DEFAULT_ALPHABET, options?.shuffle);
+    if (!alphabet.length) {
+        throw new Error('Options Error: alphabet cannot be empty.');
+    }
+
     let min: number;
     let max: number;
     let minLength: number;
     let maxLength: number;
 
     if (options?.minLength !== undefined) {
+        if (options.minLength < 1) {
+            throw new Error('Options Error: minLength has to be at least 1.');
+        }
         minLength = options.minLength;
-        min = minLength === 1 ? 0 : alphabet.length ** (minLength - 1);
+        min = decodedMinLength(options.minLength, alphabet.length);
     } else {
         min = options?.min ?? 0;
         minLength = encodedLength(min, alphabet.length);
     }
     if (options?.maxLength !== undefined) {
+        if (options.maxLength < 1) {
+            throw new Error('Options Error: maxLength has to be at least 1.');
+        }
         maxLength = options.maxLength;
-        max = alphabet.length ** options.maxLength - 1;
+        max = decodedMaxLength(options.maxLength, alphabet.length);
     } else {
         max = options?.max ?? Number.MAX_SAFE_INTEGER;
         maxLength = encodedLength(max, alphabet.length);
     }
 
+    if (min < 0) {
+        throw new Error('Options Error: min has to be at least 0.');
+    }
+    if (!Number.isSafeInteger(min) || !Number.isSafeInteger(max)) {
+        throw new Error('Options Error: min and max have to be safe integers.');
+    }
     if (min >= max) {
-        throw new Error();
+        throw new Error('Options Error: min has to be lower than max.');
     }
 
     return {
@@ -107,6 +123,31 @@ function getOptions(options?: Partial<GeneratorOptions>): GeneratorOptions {
         shuffle: options?.shuffle ?? false,
         alphabet,
     };
+}
+
+function decodedMinLength(n: number, alphabetLength: number): number {
+    if (n === 1) {
+        return 0;
+    }
+    let min = 1;
+    for (let i = 0; i < n - 1; i++) {
+        min = min * alphabetLength;
+        if (!Number.isSafeInteger(min) || min < 0) {
+            return Number.MAX_SAFE_INTEGER - 1;
+        }
+    }
+    return min;
+}
+
+function decodedMaxLength(n: number, alphabetLength: number): number {
+    let max = 1;
+    for (let i = 0; i < n; i++) {
+        max = max * alphabetLength;
+        if (!Number.isSafeInteger(max) || max < 0) {
+            return Number.MAX_SAFE_INTEGER;
+        }
+    }
+    return max - 1;
 }
 
 function encodedLength(n: number, alphabetLength: number) {
