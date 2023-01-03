@@ -2,7 +2,7 @@
     "name": "sequence-id-generator",
     "version": "0.0.2",
     "description": "Generate base62 pseudo-random sequence IDs",
-    "author": "bttrs.org",
+    "author": "bttrs.org <bttrs@bttrs.org>",
     "keywords": [
         "sequence",
         "random",
@@ -11,7 +11,7 @@
         "base62"
     ],
     "license": "MIT",
-    "homepage": "https://github.com/bttrs-org/sequence-id-generator",
+    "homepage": "https://github.com/bttrs-org/sequence-id-generator/#readme",
     "bugs": {
         "url": "https://github.com/bttrs-org/sequence-id-generator/issues"
     },
