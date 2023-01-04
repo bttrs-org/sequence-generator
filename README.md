@@ -11,6 +11,8 @@ Random values are generated with a Linear congruential generator - each value in
 By default, base62 encoded values from an interval <0 Number.MAX_SAFE_INTEGER) are generated.
 
 ```js
+import { createGenerator } from 'sequence-id-generator';
+
 const rnd = createGenerator();
 for (let i = 0; i < 15; i++) {
     console.log(rnd());

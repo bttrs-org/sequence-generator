@@ -1,17 +1,22 @@
 {
-    "include": ["./src/**/*"],
-    "exclude": ["./src/**/*.test.ts"],
-    "compileOnSave": true,
     "compilerOptions": {
-        "outDir": "./dist",
-        "module": "UMD",
-        "target": "ES2020",
+        "module": "ESNext",
+        "lib": ["ESNext"],
+        "target": "ESNext",
+        "moduleResolution": "Node",
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "esModuleInterop": true,
         "skipLibCheck": true,
-        "strict": true,
-        "allowSyntheticDefaultImports": true,
         "forceConsistentCasingInFileNames": true,
         "preserveConstEnums": true,
         "declaration": true,
-        "sourceMap": false
-    }
+        "sourceMap": false,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noEmit": true
+    },
+    "include": ["src"]
 }

@@ -1,4 +1,4 @@
-import { createLcg } from '../dist/lcg';
+import { createLcg } from './lcg';
 
 describe('lcg', () => {
     test('generates full range from 0', () => {

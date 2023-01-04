@@ -1,4 +1,4 @@
-import createGenerator, { Generator } from './index';
+import { createGenerator, Generator } from './index';
 
 describe('generator', () => {
     test('default options are correctly created', () => {

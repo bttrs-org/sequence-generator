@@ -36,7 +36,7 @@ export interface Generator {
 
 const DEFAULT_ALPHABET = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-export default function createGenerator(opts?: Partial<GeneratorOptions>): Generator {
+export function createGenerator(opts?: Partial<GeneratorOptions>): Generator {
     const options: GeneratorOptions = getOptions(opts);
     const alphabet: string[] = options.alphabet.split('');
 
