@@ -1,6 +1,6 @@
 {
     "name": "sequence-id-generator",
-    "version": "0.0.2",
+    "version": "0.1.0",
     "description": "Generate base62 pseudo-random sequence IDs",
     "author": "bttrs.org <bttrs@bttrs.org>",
     "keywords": [
